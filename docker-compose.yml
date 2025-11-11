@@ -1,0 +1,144 @@
+services:
+  aria2-pro:
+    image: p3terx/aria2-pro
+    environment:
+      - PUID=65534
+      - PGID=65534
+      - UMASK_SET=022
+      - RPC_SECRET=P3TERX
+      - RPC_PORT=6800
+      - LISTEN_PORT=6888
+      - DISK_CACHE=64M
+      - IPV6_MODE=false
+      - UPDATE_TRACKERS=true
+      - CUSTOM_TRACKER_URL=
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./aria2-config:/config
+      - ./data:/downloads
+# If you use host network mode, then no port mapping is required.
+# This is the easiest way to use IPv6 networks.
+   
+    ports:
+     - 6800:6800
+     - 6888:6888
+     - 6888:6888/udp
+    restart: unless-stopped
+# Since Aria2 will continue to generate logs, limit the log size to 1M to prevent your hard disk from running out of space.
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./sonarr-config:/config
+      - ./data:/downloads
+      - ./data:/tv
+    
+    ports:
+     - 8989:8989
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./radarr-config:/config
+      - ./data:/downloads
+      - ./data:/movies
+
+    ports:
+     - 7878:7878
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./bazarr-config:/config
+      - ./data:/media
+    ports:
+     - 6767:6767
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./prowlarr-config:/config
+    
+    ports:
+     - 9696:9696
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+# AriaNg is just a static web page, usually you only need to deploy on a single host.
+  aria-ng:
+    image: p3terx/ariang
+    command: --port 6880
+    
+    ports:
+     - 6880:6880
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  copyparty:
+    image: copyparty/ac
+    
+    ports:
+     - 3923:3923
+    volumes:
+      - ./data:/w
+      - ./copyparty-config:/cfg
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    environment:
+      - LOG_LEVEL=info
+      - TZ=Asia/Shanghai
+   
+    ports:
+     - 8191:8191
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m
