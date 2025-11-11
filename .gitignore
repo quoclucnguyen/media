@@ -1,0 +1,7 @@
+sonarr-config/*
+radarr-config/*
+prowlarr-config/*
+aria-ng-config/*
+bazarr-config/*
+data/*
+aria2-config/*
