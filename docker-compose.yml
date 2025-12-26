@@ -87,7 +87,6 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
-    volumes:
     
     ports:
      - 9696:9696
