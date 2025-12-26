@@ -14,7 +14,7 @@ services:
       - CUSTOM_TRACKER_URL=
       - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - /mnt/ssd/data:/downloads
+      - /mnt/ssd/data/downloads:/downloads
 # If you use host network mode, then no port mapping is required.
 # This is the easiest way to use IPv6 networks.
    
@@ -36,8 +36,8 @@ services:
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - /mnt/ssd/data:/downloads
-      - /mnt/ssd/data:/tv
+      - /mnt/ssd/data/downloads:/downloads
+      - /mnt/ssd/data/tv:/tv
     
     ports:
      - 8989:8989
@@ -54,8 +54,8 @@ services:
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - /mnt/ssd/data:/downloads
-      - /mnt/ssd/data:/movies
+      - /mnt/ssd/data/downloads:/downloads
+      - /mnt/ssd/data/movies:/movies
 
     ports:
      - 7878:7878
