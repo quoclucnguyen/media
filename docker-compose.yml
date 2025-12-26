@@ -12,10 +12,9 @@ services:
       - IPV6_MODE=false
       - UPDATE_TRACKERS=true
       - CUSTOM_TRACKER_URL=
-      - TZ=Asia/Shanghai
+      - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - ./aria2-config:/config
-      - ./data:/downloads
+      - /mnt/ssd/data:/downloads
 # If you use host network mode, then no port mapping is required.
 # This is the easiest way to use IPv6 networks.
    
@@ -35,11 +34,10 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Shanghai
+      - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - ./sonarr-config:/config
-      - ./data:/downloads
-      - ./data:/tv
+      - /mnt/ssd/data:/downloads
+      - /mnt/ssd/data:/tv
     
     ports:
      - 8989:8989
@@ -54,11 +52,10 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Shanghai
+      - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - ./radarr-config:/config
-      - ./data:/downloads
-      - ./data:/movies
+      - /mnt/ssd/data:/downloads
+      - /mnt/ssd/data:/movies
 
     ports:
      - 7878:7878
@@ -73,10 +70,9 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Shanghai
+      - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - ./bazarr-config:/config
-      - ./data:/media
+      - /mnt/ssd/data:/media
     ports:
      - 6767:6767
     restart: unless-stopped
@@ -90,9 +86,8 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Shanghai
+      - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - ./prowlarr-config:/config
     
     ports:
      - 9696:9696
@@ -121,7 +116,7 @@ services:
     ports:
      - 3923:3923
     volumes:
-      - ./data:/w
+      - /mnt/ssd/data:/w
       - ./copyparty-config:/cfg
     restart: unless-stopped
     logging:
@@ -133,7 +128,7 @@ services:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     environment:
       - LOG_LEVEL=info
-      - TZ=Asia/Shanghai
+      - TZ=Asia/Ho_Chi_Minh
    
     ports:
      - 8191:8191
