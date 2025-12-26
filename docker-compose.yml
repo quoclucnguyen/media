@@ -54,7 +54,7 @@ services:
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
     volumes:
-      - /mnt/ssd/data/downloads:/downloads
+      - /mnt/ssd/data/downloads-radarr:/downloads
       - /mnt/ssd/data/movies:/movies
 
     ports:
