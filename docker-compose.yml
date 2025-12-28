@@ -95,6 +95,13 @@ services:
       driver: json-file
       options:
         max-size: 1m
+    dns: 
+      - 1.1.1.1
+      - 8.8.8.8
+      - 8.8.4.4
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
 
 # AriaNg is just a static web page, usually you only need to deploy on a single host.
   aria-ng:
