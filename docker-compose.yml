@@ -136,3 +136,13 @@ services:
       driver: json-file
       options:
         max-size: 1m
+  jellyfin:
+    image: jellyfin/jellyfin:latest       # dùng ảnh chính thức từ Docker Hub
+    ports:
+      - "8096:8096/tcp"                  # trình duyệt truy cập Jellyfin
+      - "7359:7359/udp"                  # cho phát hiện DLNA/UPnP
+    volumes:
+      - type: bind
+        source: /mnt/ssd/data
+        target: /media                    # thư mục chứa phim/nhạc của bạn
+    restart: unless-stopped        
