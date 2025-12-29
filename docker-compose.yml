@@ -102,6 +102,10 @@ services:
 
   jellyfin:
     image: jellyfin/jellyfin:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Ho_Chi_Minh
     ports:
       - "8096:8096/tcp"
       - "7359:7359/udp"
