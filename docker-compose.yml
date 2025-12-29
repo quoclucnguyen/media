@@ -106,5 +106,8 @@ services:
       - "8096:8096/tcp"
       - "7359:7359/udp"
     volumes:
-      - /mnt/ssd/data:/media
+      - /mnt/ssd/data/jellyfin/config:/config
+      - /mnt/ssd/data/jellyfin/mdk:/cache
+      - /mnt/ssd/data/tv:/media/tv
+      - /mnt/ssd/data/movies:/media/movies
     restart: unless-stopped
