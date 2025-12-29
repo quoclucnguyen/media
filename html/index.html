@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Server Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light mode - Soft pastel color palette */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+
+            /* Service accent colors - soft pastel */
+            --accent-green: #86efac;
+            --accent-blue: #7dd3fc;
+            --accent-orange: #fdba74;
+            --accent-yellow: #fde047;
+            --accent-purple: #c4b5fd;
+            --accent-cyan: #67e8f9;
+            --accent-pink: #f9a8d4;
+            --accent-red: #fca5a5;
+
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+            --border-color: rgba(0, 0, 0, 0.04);
+            --divider-color: rgba(0, 0, 0, 0.06);
+            --card-hover-bg: rgba(255, 255, 255, 1);
+
+            --port-badge-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            --port-badge-text: #6366f1;
+
+            --status-indicator-outer: rgba(255, 255, 255, 0.8);
+
+            --bg-radial-1: rgba(102, 126, 234, 0.08);
+            --bg-radial-2: rgba(118, 75, 162, 0.08);
+            --bg-radial-3: rgba(236, 72, 153, 0.05);
+        }
+
+        /* Dark mode - Automatic based on system preference */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #0f172a;
+                --bg-secondary: #1e293b;
+                --bg-gradient: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+
+                --text-primary: #f1f5f9;
+                --text-secondary: #cbd5e1;
+                --text-muted: #94a3b8;
+
+                /* Service accent colors - slightly muted for dark mode */
+                --accent-green: #4ade80;
+                --accent-blue: #38bdf8;
+                --accent-orange: #fb923c;
+                --accent-yellow: #facc15;
+                --accent-purple: #a78bfa;
+                --accent-cyan: #22d3ee;
+                --accent-pink: #f472b6;
+                --accent-red: #f87171;
+
+                --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+                --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+
+                --border-color: rgba(255, 255, 255, 0.08);
+                --divider-color: rgba(255, 255, 255, 0.1);
+                --card-hover-bg: rgba(30, 41, 59, 1);
+
+                --port-badge-bg: linear-gradient(135deg, rgba(129, 140, 248, 0.2) 0%, rgba(167, 139, 250, 0.2) 100%);
+                --port-badge-text: #a5b4fc;
+
+                --status-indicator-outer: rgba(30, 41, 59, 0.8);
+
+                --bg-radial-1: rgba(99, 102, 241, 0.15);
+                --bg-radial-2: rgba(139, 92, 246, 0.15);
+                --bg-radial-3: rgba(236, 72, 153, 0.1);
+            }
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Decorative background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, var(--bg-radial-1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, var(--bg-radial-2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, var(--bg-radial-3) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(1.75rem, 5vw, 2.75rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            min-width: 100px;
+            animation: scaleIn 0.4s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .stat-item:nth-child(1) { animation-delay: 0.1s; }
+        .stat-item:nth-child(2) { animation-delay: 0.2s; }
+        .stat-item:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .stat-value {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: var(--bg-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* Services grid - Mobile first */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-top: 32px;
+        }
+
+        /* Tablet */
+        @media (min-width: 640px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+            }
+
+            .container {
+                padding: 48px 32px;
+            }
+
+            header {
+                margin-bottom: 56px;
+            }
+        }
+
+        .service-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            box-shadow: var(--shadow-md);
+            animation: fadeInUp 0.5s ease-out;
+            animation-fill-mode: both;
+            border: 1px solid var(--border-color);
+        }
+
+        .service-card:nth-child(1) { animation-delay: 0.05s; }
+        .service-card:nth-child(2) { animation-delay: 0.1s; }
+        .service-card:nth-child(3) { animation-delay: 0.15s; }
+        .service-card:nth-child(4) { animation-delay: 0.2s; }
+        .service-card:nth-child(5) { animation-delay: 0.25s; }
+        .service-card:nth-child(6) { animation-delay: 0.3s; }
+        .service-card:nth-child(7) { animation-delay: 0.35s; }
+        .service-card:nth-child(8) { animation-delay: 0.4s; }
+        .service-card:nth-child(9) { animation-delay: 0.45s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--card-accent);
+        }
+
+        .service-card:active {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Service-specific accent colors */
+        .service-card.aria2-pro { --card-accent: var(--accent-green); }
+        .service-card.sonarr { --card-accent: var(--accent-blue); }
+        .service-card.radarr { --card-accent: var(--accent-orange); }
+        .service-card.bazarr { --card-accent: var(--accent-yellow); }
+        .service-card.prowlarr { --card-accent: var(--accent-purple); }
+        .service-card.aria-ng { --card-accent: var(--accent-cyan); }
+        .service-card.copyparty { --card-accent: var(--accent-pink); }
+        .service-card.flaresolverr { --card-accent: var(--accent-red); }
+        .service-card.jellyfin { --card-accent: var(--accent-cyan); }
+
+        /* Color bar accent */
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--card-accent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .service-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, var(--card-accent) 0%, rgba(255, 255, 255, 0.8) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .service-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 42px;
+        }
+
+        .service-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid var(--divider-color);
+            gap: 12px;
+        }
+
+        .port-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--port-badge-bg);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--port-badge-text);
+        }
+
+        .port-badge svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.7;
+        }
+
+        .link-text {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--card-accent);
+            transition: gap 0.2s;
+        }
+
+        .service-card:hover .link-text {
+            gap: 8px;
+        }
+
+        .link-text svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.2s;
+        }
+
+        .service-card:hover .link-text svg {
+            transform: translateX(2px);
+        }
+
+        /* Status indicator - softer version */
+        .status-indicator {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--card-accent);
+            box-shadow: 0 0 0 3px var(--status-indicator-outer),
+                        0 0 0 5px var(--card-accent);
+            animation: softPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes softPulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding: 24px;
+            animation: fadeIn 0.8s ease-out;
+            animation-fill-mode: both;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        footer p {
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        /* Touch optimization for mobile */
+        @media (hover: none) {
+            .service-card:hover {
+                transform: none;
+            }
+
+            .service-card:active {
+                transform: scale(0.98);
+                box-shadow: var(--shadow-md);
+            }
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Large screens optimization */
+        @media (min-width: 1280px) {
+            .container {
+                max-width: 1400px;
+            }
+
+            .services-grid {
+                gap: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Media Server Dashboard</h1>
+            <p class="subtitle">Manage all your services in one place</p>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value">9</div>
+                    <div class="stat-label">Services</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">✓</div>
+                    <div class="stat-label">Status</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="services-grid">
+            <a href="http://localhost:6800" class="service-card aria2-pro">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">⬇️</div>
+                    <div class="service-name">Aria2 Pro</div>
+                </div>
+                <p class="service-description">High-performance download manager with RPC support</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        6800, 6888
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:8989" class="service-card sonarr">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">📺</div>
+                    <div class="service-name">Sonarr</div>
+                </div>
+                <p class="service-description">TV series management - Auto-download and organize shows</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        8989
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:7878" class="service-card radarr">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🎬</div>
+                    <div class="service-name">Radarr</div>
+                </div>
+                <p class="service-description">Movie collection manager - Automated downloads</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        7878
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:6767" class="service-card bazarr">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🎭</div>
+                    <div class="service-name">Bazarr</div>
+                </div>
+                <p class="service-description">Subtitle management for Sonarr and Radarr</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        6767
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:9696" class="service-card prowlarr">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🔍</div>
+                    <div class="service-name">Prowlarr</div>
+                </div>
+                <p class="service-description">Indexer manager - Centralized index management</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        9696
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:6880" class="service-card aria-ng">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🎛️</div>
+                    <div class="service-name">Aria-Ng</div>
+                </div>
+                <p class="service-description">Modern web UI for Aria2 downloads</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        6880
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:3923" class="service-card copyparty">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">📁</div>
+                    <div class="service-name">Copyparty</div>
+                </div>
+                <p class="service-description">File server - Easy sharing and browsing</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        3923
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:8191" class="service-card flaresolverr">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🛡️</div>
+                    <div class="service-name">FlareSolverr</div>
+                </div>
+                <p class="service-description">Cloudflare bypass and anti-bot proxy</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        8191
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
+            <a href="http://localhost:8096" class="service-card jellyfin">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🎞️</div>
+                    <div class="service-name">Jellyfin</div>
+                </div>
+                <p class="service-description">Media server - Stream your collection</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        8096
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+        </main>
+
+        <footer>
+            <p>Media Server Dashboard v2.0 • Soft Light Theme</p>
+        </footer>
+    </div>
+
+    <script>
+        // Auto-detect base URL (localhost or IP) and update all service links
+        (function() {
+            const baseUrl = window.location.protocol + '//' + window.location.hostname;
+
+            // Service port mapping
+            const services = {
+                'aria2-pro': ['6800', '6888'],
+                'sonarr': ['8989'],
+                'radarr': ['7878'],
+                'bazarr': ['6767'],
+                'prowlarr': ['9696'],
+                'aria-ng': ['6880'],
+                'copyparty': ['3923'],
+                'flaresolverr': ['8191'],
+                'jellyfin': ['8096']
+            };
+
+            // Update links for each service card
+            document.querySelectorAll('.service-card').forEach(card => {
+                const serviceClass = Array.from(card.classList)
+                    .find(cls => cls !== 'service-card' && services[cls]);
+
+                if (serviceClass && services[serviceClass]) {
+                    const primaryPort = services[serviceClass][0];
+                    card.href = baseUrl + ':' + primaryPort;
+                    // Open in new tab
+                    card.target = '_blank';
+                    card.rel = 'noopener noreferrer';
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
