@@ -128,3 +128,22 @@ services:
     volumes:
       - ./html:/usr/share/nginx/html:ro
     restart: unless-stopped
+
+  minidlna:
+    image: vladgh/minidlna:latest
+    container_name: minidlna
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Ho_Chi_Minh
+
+      - MINIDLNA_MEDIA_DIR=/media
+      - MINIDLNA_CONFIG_FILE=/config/minidlna.conf
+      - MINIDLNA_FRIENDLY_NAME=MiniDLNA_Server
+
+    volumes:
+      - /mnt/ssd/data:/media
+      - /mnt/ssd/data/minidlna/config:/config
+      - /mnt/ssd/data/minidlna/cache:/cache
