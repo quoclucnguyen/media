@@ -129,21 +129,17 @@ services:
       - ./html:/usr/share/nginx/html:ro
     restart: unless-stopped
 
-  minidlna:
-    image: vladgh/minidlna:latest
-    container_name: minidlna
-    restart: unless-stopped
-    network_mode: host
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
-
-      - MINIDLNA_MEDIA_DIR=/media
-      - MINIDLNA_CONFIG_FILE=/config/minidlna.conf
-      - MINIDLNA_FRIENDLY_NAME=MiniDLNA_Server
-
     volumes:
-      - /mnt/ssd/data:/media
-      - /mnt/ssd/data/minidlna/config:/config
-      - /mnt/ssd/data/minidlna/cache:/cache
+      - /mnt/ssd/data/lidarr/config:/config
+      - /mnt/ssd/data/music:/music
+      - /mnt/ssd/data/downloads:/downloads
+    ports:
+      - 8686:8686
+    restart: unless-stopped
