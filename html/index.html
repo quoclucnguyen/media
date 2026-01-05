@@ -270,6 +270,7 @@
         .service-card:nth-child(7) { animation-delay: 0.35s; }
         .service-card:nth-child(8) { animation-delay: 0.4s; }
         .service-card:nth-child(9) { animation-delay: 0.45s; }
+        .service-card:nth-child(10) { animation-delay: 0.5s; }
 
         @keyframes fadeInUp {
             from {
@@ -303,6 +304,7 @@
         .service-card.copyparty { --card-accent: var(--accent-pink); }
         .service-card.flaresolverr { --card-accent: var(--accent-red); }
         .service-card.jellyfin { --card-accent: var(--accent-cyan); }
+        .service-card.lidarr { --card-accent: var(--accent-pink); }
 
         /* Color bar accent */
         .service-card::before {
@@ -503,7 +505,7 @@
             <p class="subtitle">Manage all your services in one place</p>
             <div class="stats-bar">
                 <div class="stat-item">
-                    <div class="stat-value">9</div>
+                    <div class="stat-value">10</div>
                     <div class="stat-label">Services</div>
                 </div>
                 <div class="stat-item">
@@ -724,6 +726,29 @@
                     </span>
                 </div>
             </a>
+
+            <a href="http://localhost:8686" class="service-card lidarr">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🎵</div>
+                    <div class="service-name">Lidarr</div>
+                </div>
+                <p class="service-description">Music collection manager - Automated music downloads</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        8686
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
         </main>
 
         <footer>
@@ -746,7 +771,8 @@
                 'aria-ng': ['6880'],
                 'copyparty': ['3923'],
                 'flaresolverr': ['8191'],
-                'jellyfin': ['8096']
+                'jellyfin': ['8096'],
+                'lidarr': ['8686']
             };
 
             // Update links for each service card
