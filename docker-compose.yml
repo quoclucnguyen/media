@@ -118,6 +118,7 @@ services:
       - /mnt/ssd/data/jellyfin/mdk:/cache
       - /mnt/ssd/data/tv:/media/tv
       - /mnt/ssd/data/movies:/media/movies
+      - /mnt/ssd/data/music:/media/music
     restart: unless-stopped
 
   dashboard:
@@ -143,17 +144,4 @@ services:
       - /mnt/ssd/data/downloads:/downloads
     ports:
       - 8686:8686
-    restart: unless-stopped
-  yubal:
-    image: ghcr.io/guillevc/yubal:latest
-    container_name: yubal
-    ports:
-      - 8000:8000
-    environment:
-      YUBAL_TZ: Asia/Ho_Chi_Minh
-      # Check the Configuration section for more variables
-    volumes:
-      - /mnt/ssd/data/yubal-music:/app/data # Where your music will be saved
-      - /mnt/ssd/data/beets:/app/beets # Beets configuration and database
-      - /mnt/ssd/data/ytdlp:/app/ytdlp # yt-dlp configuration (cookies)
     restart: unless-stopped
