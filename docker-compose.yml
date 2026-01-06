@@ -121,12 +121,13 @@ services:
     restart: unless-stopped
 
   dashboard:
-    image: nginx:stable-alpine-slim
+    image: p3terx/darkhttpd
     container_name: media-dashboard
     ports:
       - "80:80"
     volumes:
-      - ./html:/usr/share/nginx/html:ro
+      - ./html:/var/www/html:ro
+    command: ["/var/www/html", "--port", "80"]
     restart: unless-stopped
 
   lidarr:
