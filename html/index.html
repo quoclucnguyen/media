@@ -1,13 +1,37 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Media Server Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Media Dashboard</title>
+    <meta name="description" content="Home media stack: every service in one place.">
     <style>
+        /* Self-hosted fonts: Outfit (display/body) + JetBrains Mono (numbers, ports) */
+        @font-face {
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 300 800;
+            font-display: swap;
+            src: url('/fonts/outfit-latin.woff2') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+        @font-face {
+            font-family: 'Outfit';
+            font-style: normal;
+            font-weight: 300 800;
+            font-display: swap;
+            src: url('/fonts/outfit-latin-ext.woff2') format('woff2');
+            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+        @font-face {
+            font-family: 'JetBrains Mono';
+            font-style: normal;
+            font-weight: 400 700;
+            font-display: swap;
+            src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,267 +39,152 @@
         }
 
         :root {
-            /* Light mode - Soft pastel color palette */
-            --bg-primary: #f8fafc;
-            --bg-secondary: #ffffff;
-            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color-scheme: light dark;
 
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
+            /* Neutral base: zinc family, light mode */
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --tile: #f4f4f5;
+            --border: rgba(24, 24, 27, 0.08);
+            --divider: rgba(24, 24, 27, 0.06);
+            --text-1: #18181b;
+            --text-2: #52525b;
+            --text-3: #a1a1aa;
 
-            /* Service accent colors - soft pastel */
-            --accent-green: #86efac;
-            --accent-blue: #7dd3fc;
-            --accent-orange: #fdba74;
-            --accent-yellow: #fde047;
-            --accent-purple: #c4b5fd;
-            --accent-cyan: #67e8f9;
-            --accent-pink: #f9a8d4;
-            --accent-red: #fca5a5;
+            /* Single accent, locked for the whole page */
+            --accent: #059669;
+            --accent-weak: rgba(5, 150, 105, 0.09);
 
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-
-            --border-color: rgba(0, 0, 0, 0.04);
-            --divider-color: rgba(0, 0, 0, 0.06);
-            --card-hover-bg: rgba(255, 255, 255, 1);
-
-            --port-badge-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            --port-badge-text: #6366f1;
-
-            --status-indicator-outer: rgba(255, 255, 255, 0.8);
-
-            --bg-radial-1: rgba(102, 126, 234, 0.08);
-            --bg-radial-2: rgba(118, 75, 162, 0.08);
-            --bg-radial-3: rgba(236, 72, 153, 0.05);
+            --shadow-card: 0 1px 2px rgba(24, 24, 27, 0.04);
+            --shadow-lift: 0 8px 24px -8px rgba(24, 24, 27, 0.14);
         }
 
-        /* Dark mode - Automatic based on system preference */
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg-primary: #0f172a;
-                --bg-secondary: #1e293b;
-                --bg-gradient: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
+                --bg: #0a0a0b;
+                --surface: #141416;
+                --tile: #1e1e21;
+                --border: rgba(244, 244, 245, 0.08);
+                --divider: rgba(244, 244, 245, 0.07);
+                --text-1: #f4f4f5;
+                --text-2: #a1a1aa;
+                --text-3: #71717a;
 
-                --text-primary: #f1f5f9;
-                --text-secondary: #cbd5e1;
-                --text-muted: #94a3b8;
+                --accent: #34d399;
+                --accent-weak: rgba(52, 211, 153, 0.1);
 
-                /* Service accent colors - slightly muted for dark mode */
-                --accent-green: #4ade80;
-                --accent-blue: #38bdf8;
-                --accent-orange: #fb923c;
-                --accent-yellow: #facc15;
-                --accent-purple: #a78bfa;
-                --accent-cyan: #22d3ee;
-                --accent-pink: #f472b6;
-                --accent-red: #f87171;
-
-                --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-                --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
-
-                --border-color: rgba(255, 255, 255, 0.08);
-                --divider-color: rgba(255, 255, 255, 0.1);
-                --card-hover-bg: rgba(30, 41, 59, 1);
-
-                --port-badge-bg: linear-gradient(135deg, rgba(129, 140, 248, 0.2) 0%, rgba(167, 139, 250, 0.2) 100%);
-                --port-badge-text: #a5b4fc;
-
-                --status-indicator-outer: rgba(30, 41, 59, 0.8);
-
-                --bg-radial-1: rgba(99, 102, 241, 0.15);
-                --bg-radial-2: rgba(139, 92, 246, 0.15);
-                --bg-radial-3: rgba(236, 72, 153, 0.1);
+                --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+                --shadow-lift: 0 8px 24px -8px rgba(0, 0, 0, 0.5);
             }
         }
 
         body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-1);
             min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        /* Decorative background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 50%, var(--bg-radial-1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, var(--bg-radial-2) 0%, transparent 50%),
-                radial-gradient(circle at 40% 20%, var(--bg-radial-3) 0%, transparent 50%);
-            z-index: -1;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1160px;
             margin: 0 auto;
-            padding: 24px 16px;
+            padding: 40px 20px 32px;
         }
 
-        /* Header */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            animation: fadeInDown 0.6s ease-out;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Header: left-aligned title, live status on the right */
+        .top {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
         }
 
         h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(1.75rem, 5vw, 2.75rem);
+            font-size: clamp(1.55rem, 3.5vw, 2.1rem);
             font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
         }
 
         .subtitle {
-            font-size: clamp(0.875rem, 2vw, 1rem);
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 24px;
-        }
-
-        /* Stats bar */
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-top: 24px;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 16px 24px;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            min-width: 100px;
-            animation: scaleIn 0.4s ease-out;
-            animation-fill-mode: both;
-        }
-
-        .stat-item:nth-child(1) { animation-delay: 0.1s; }
-        .stat-item:nth-child(2) { animation-delay: 0.2s; }
-        .stat-item:nth-child(3) { animation-delay: 0.3s; }
-
-        @keyframes scaleIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .stat-value {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.75rem;
-            font-weight: 700;
-            background: var(--bg-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-top: 4px;
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: var(--text-2);
         }
 
-        /* Services grid - Mobile first */
-        .services-grid {
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--surface);
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--text-2);
+            white-space: nowrap;
+        }
+
+        .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text-3);
+            transition: background 0.3s;
+        }
+
+        .chip[data-live="true"] .chip-dot {
+            background: var(--accent);
+        }
+
+        /* Services grid */
+        .grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 16px;
-            margin-top: 32px;
+            gap: 14px;
         }
 
-        /* Tablet */
         @media (min-width: 640px) {
-            .services-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
+            .grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* Desktop */
         @media (min-width: 1024px) {
-            .services-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 24px;
-            }
-
-            .container {
-                padding: 48px 32px;
-            }
-
-            header {
-                margin-bottom: 56px;
-            }
+            .grid { grid-template-columns: repeat(3, 1fr); }
         }
 
-        .service-card {
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            padding: 20px;
+        @media (min-width: 1280px) {
+            .grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        /* Card. Radius scale: card 14, tile 10, controls 8 */
+        .card {
             position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: var(--shadow-card);
             text-decoration: none;
             color: inherit;
-            display: block;
-            box-shadow: var(--shadow-md);
-            animation: fadeInUp 0.5s ease-out;
-            animation-fill-mode: both;
-            border: 1px solid var(--border-color);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s, box-shadow 0.2s;
+            animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: calc(var(--i, 0) * 45ms);
         }
 
-        .service-card:nth-child(1) { animation-delay: 0.05s; }
-        .service-card:nth-child(2) { animation-delay: 0.1s; }
-        .service-card:nth-child(3) { animation-delay: 0.15s; }
-        .service-card:nth-child(4) { animation-delay: 0.2s; }
-        .service-card:nth-child(5) { animation-delay: 0.25s; }
-        .service-card:nth-child(6) { animation-delay: 0.3s; }
-        .service-card:nth-child(7) { animation-delay: 0.35s; }
-        .service-card:nth-child(8) { animation-delay: 0.4s; }
-        .service-card:nth-child(9) { animation-delay: 0.45s; }
-        .service-card:nth-child(10) { animation-delay: 0.5s; }
-
-        @keyframes fadeInUp {
+        @keyframes rise {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(12px);
             }
             to {
                 opacity: 1;
@@ -283,535 +192,366 @@
             }
         }
 
-        .service-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--card-accent);
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lift);
         }
 
-        .service-card:active {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+        .card:active {
+            transform: scale(0.98);
         }
 
-        /* Service-specific accent colors */
-        .service-card.aria2-pro { --card-accent: var(--accent-green); }
-        .service-card.sonarr { --card-accent: var(--accent-blue); }
-        .service-card.radarr { --card-accent: var(--accent-orange); }
-        .service-card.bazarr { --card-accent: var(--accent-yellow); }
-        .service-card.prowlarr { --card-accent: var(--accent-purple); }
-        .service-card.aria-ng { --card-accent: var(--accent-cyan); }
-        .service-card.copyparty { --card-accent: var(--accent-pink); }
-        .service-card.opencode { --card-accent: var(--accent-green); }
-        .service-card.flaresolverr { --card-accent: var(--accent-red); }
-        .service-card.jellyfin { --card-accent: var(--accent-cyan); }
-        .service-card.lidarr { --card-accent: var(--accent-pink); }
-
-        /* Color bar accent */
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--card-accent);
-            opacity: 0;
-            transition: opacity 0.3s;
+        .card:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
         }
 
-        .service-card:hover::before {
-            opacity: 1;
-        }
-
-        .card-header {
+        .card-head {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
-        }
-
-        .service-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            background: linear-gradient(135deg, var(--card-accent) 0%, rgba(255, 255, 255, 0.8) 100%);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            flex-shrink: 0;
-        }
-
-        .service-name {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1.3;
-        }
-
-        .service-description {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            line-height: 1.5;
-            margin-bottom: 16px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            min-height: 42px;
-        }
-
-        .service-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 16px;
-            border-top: 1px solid var(--divider-color);
             gap: 12px;
         }
 
-        .port-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: var(--port-badge-bg);
-            border-radius: 8px;
-            padding: 6px 12px;
-            font-family: 'Poppins', sans-serif;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            color: var(--port-badge-text);
-        }
-
-        .port-badge svg {
-            width: 14px;
-            height: 14px;
-            opacity: 0.7;
-        }
-
-        .link-text {
+        .icon-tile {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.8125rem;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: var(--tile);
+            color: var(--text-1);
+        }
+
+        .icon-tile svg {
+            width: 21px;
+            height: 21px;
+        }
+
+        .service-name {
+            font-size: 1.02rem;
             font-weight: 600;
-            color: var(--card-accent);
-            transition: gap 0.2s;
+            letter-spacing: -0.01em;
+            padding-right: 14px;
         }
 
-        .service-card:hover .link-text {
-            gap: 8px;
-        }
-
-        .link-text svg {
-            width: 18px;
-            height: 18px;
-            transition: transform 0.2s;
-        }
-
-        .service-card:hover .link-text svg {
-            transform: translateX(2px);
-        }
-
-        /* Status indicator - softer version */
-        .status-indicator {
+        /* Status dot: real probe state, not decoration */
+        .status {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 18px;
+            right: 18px;
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--card-accent);
-            box-shadow: 0 0 0 3px var(--status-indicator-outer),
-                        0 0 0 5px var(--card-accent);
-            animation: softPulse 2s ease-in-out infinite;
+            border: 1.5px solid var(--text-3);
+            background: transparent;
+            transition: background 0.3s, border-color 0.3s;
         }
 
-        @keyframes softPulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.7;
-            }
+        .status[data-state="checking"] {
+            border-color: var(--text-3);
+            animation: blink 1.2s ease-in-out infinite;
         }
 
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 48px;
-            padding: 24px;
-            animation: fadeIn 0.8s ease-out;
-            animation-fill-mode: both;
-            animation-delay: 0.5s;
+        .status[data-state="online"] {
+            border-color: var(--accent);
+            background: var(--accent);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        .status[data-state="offline"] {
+            border-color: var(--text-3);
+            background: var(--text-3);
+            opacity: 0.45;
         }
 
-        footer p {
-            color: var(--text-muted);
-            font-size: 0.8125rem;
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .service-desc {
+            font-size: 0.855rem;
+            color: var(--text-2);
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid var(--divider);
+        }
+
+        .port {
+            font-family: 'JetBrains Mono', ui-monospace, monospace;
+            font-size: 0.75rem;
             font-weight: 500;
+            color: var(--text-2);
+            background: var(--tile);
+            border-radius: 8px;
+            padding: 4px 8px;
         }
 
-        /* Touch optimization for mobile */
+        .open {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .open svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .card:hover .open svg {
+            transform: translateX(2px);
+        }
+
+        footer {
+            margin-top: 36px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-3);
+        }
+
+        @media (max-width: 640px) {
+            .container { padding-top: 28px; }
+            .top { margin-bottom: 24px; }
+        }
+
+        /* Touch: no hover lift */
         @media (hover: none) {
-            .service-card:hover {
+            .card:hover {
                 transform: none;
-            }
-
-            .service-card:active {
-                transform: scale(0.98);
-                box-shadow: var(--shadow-md);
+                box-shadow: var(--shadow-card);
             }
         }
 
-        /* Reduce motion for accessibility */
+        /* Reduced motion: everything settles instantly */
         @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
+            *, *::before, *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* Large screens optimization */
-        @media (min-width: 1280px) {
-            .container {
-                max-width: 1400px;
-            }
-
-            .services-grid {
-                gap: 28px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Media Server Dashboard</h1>
-            <p class="subtitle">Manage all your services in one place</p>
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-value">10</div>
-                    <div class="stat-label">Services</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">24/7</div>
-                    <div class="stat-label">Uptime</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">✓</div>
-                    <div class="stat-label">Status</div>
-                </div>
+        <header class="top">
+            <div>
+                <h1>Media Dashboard</h1>
+                <p class="subtitle">All home services in one place</p>
             </div>
+            <span class="chip" id="status-chip">
+                <span class="chip-dot"></span>
+                <span id="online-count">checking&hellip;</span>
+            </span>
         </header>
 
-        <main class="services-grid">
-            <a href="http://localhost:6800" class="service-card aria2-pro">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">⬇️</div>
-                    <div class="service-name">Aria2 Pro</div>
-                </div>
-                <p class="service-description">High-performance download manager with RPC support</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        6800, 6888
+        <main class="grid">
+            <a href="http://localhost:6800" class="card" data-port="6800" style="--i:0">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Aria2 Pro</span>
+                </span>
+                <span class="service-desc">Download manager with RPC control</span>
+                <span class="card-meta">
+                    <span class="port">6800</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:8989" class="service-card sonarr">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">📺</div>
-                    <div class="service-name">Sonarr</div>
-                </div>
-                <p class="service-description">TV series management - Auto-download and organize shows</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        8989
+            <a href="http://localhost:8989" class="card" data-port="8989" style="--i:1">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.212 4.282c1.851 2.204 2.777 4.776 2.777 7.718 0 2.848-.867 5.344-2.602 7.489a934.355 934.355 0 0 1-2.101-2.095c-1.477-1.477-1.792-3.293-1.792-5.278 0-2.224.127-3.486 1.577-4.935l2.478-2.478a13.209 13.209 0 0 0-.337-.421Zm-17.7 16.193C1.708 18.678.6 16.59.188 14.213A11.84 11.84 0 0 1 .011 12c0-.28.006-.548.017-.802 0-.026.007-.052.022-.078.153-2.601 1.076-4.889 2.767-6.865-.108.127-.214.256-.316.387 0 0 1.351 1.346 2.329 2.323 1.408 1.409 1.726 3.215 1.726 5.151 0 1.985-.249 3.762-1.781 5.295-1.035 1.035-2.119 2.124-2.119 2.124.112.136.229.271.349.404.029-.027 1.297-1.348 2.123-2.175 1.638-1.637 1.928-3.528 1.928-5.648 0-2.072-.365-3.997-1.873-5.504a620.045 620.045 0 0 0-2.366-2.357c.168-.196.342-.388.523-.576l3.117 3.106-.194.195 1.903 1.898.547-.549L6.81 6.432l-.196.196L3.495 3.52c.01-.009.436-.416.643-.597.009.011 2.28 2.283 2.28 2.283 1.538 1.537 3.5 1.955 5.621 1.955 2.18 0 4.134-.442 5.731-2.038.907-.908 2.153-2.149 2.162-2.16.17.151.491.461.56.528l.013.013-3.111 3.028-.001.002-.197-.194-1.876 1.903.552.543 1.875-1.903-.197-.194 3.109-3.026c.193.203.377.41.553.619-.03.025-2.495 2.546-2.495 2.546-1.556 1.556-1.723 2.9-1.723 5.288 0 2.121.361 4.054 1.939 5.632a576.91 576.91 0 0 0 2.133 2.124c-.183.208-.599.645-.613.66l-3.066-3.174.195-.196-1.995-1.986-.546.549 1.995 1.986.195-.196 3.065 3.172c-.021.019-.385.362-.552.506-.01-.013-1.974-1.978-1.974-1.978-1.842-1.842-3.299-2.039-5.731-2.039-2.338 0-3.92.239-5.632 1.95-.944.944-2.078 2.085-2.089 2.099-.275-.23-.649-.594-.649-.594l3.019-3.024.199.192 1.854-1.925-.558-.538-1.854 1.926.199.191-3.016 3.022ZM12 8.672A3.33 3.33 0 0 0 8.672 12 3.33 3.33 0 0 0 12 15.328 3.33 3.33 0 0 0 15.328 12 3.33 3.33 0 0 0 12 8.672ZM4.52 2.6C6.665.867 9.162 0 12.011 0c2.88 0 5.394.88 7.541 2.639 0 0-1.215 1.209-2.136 2.13-1.496 1.496-3.334 1.892-5.377 1.892-1.985 0-3.829-.37-5.267-1.809L4.52 2.6Zm14.837 18.909a9.507 9.507 0 0 1-.342.256C16.994 23.255 14.659 24 12.011 24c-2.652 0-4.983-.745-6.993-2.235-.104-.074-.208-.15-.31-.227 0 0 1.096-1.101 2.053-2.058 1.602-1.602 3.09-1.804 5.278-1.804 2.28 0 3.651.166 5.377 1.892l1.941 1.941Z"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Sonarr</span>
+                </span>
+                <span class="service-desc">TV series, downloaded and organized automatically</span>
+                <span class="card-meta">
+                    <span class="port">8989</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:7878" class="service-card radarr">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🎬</div>
-                    <div class="service-name">Radarr</div>
-                </div>
-                <p class="service-description">Movie collection manager - Automated downloads</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        7878
+            <a href="http://localhost:7878" class="card" data-port="7878" style="--i:2">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5.274 0C3.189.039 1.19 1.547 1.19 4.705l.184 14.518c0 1.47 1.103 2.205 2.573 2.021L3.764 3.786c0-1.654.919-1.838 2.022-1.103l14.7 8.27c1.103.734 1.655 1.47 1.838 2.756.92-1.654.552-4.043-1.286-5.33L7.991.846A4.559 4.559 0 0 0 5.274.001zm1.982 6.91-.184 10.107 9.004-5.146Zm13.598 6.064-15.068 8.82c-.92.552-2.022.736-3.124.368.918 1.47 3.307 2.389 5.145 1.47l12.68-7.35c1.102-.736 1.286-2.022.367-3.308z"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Radarr</span>
+                </span>
+                <span class="service-desc">Movie collection, downloaded automatically</span>
+                <span class="card-meta">
+                    <span class="port">7878</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:6767" class="service-card bazarr">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🎭</div>
-                    <div class="service-name">Bazarr</div>
-                </div>
-                <p class="service-description">Subtitle management for Sonarr and Radarr</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        6767
+            <a href="http://localhost:8686" class="card" data-port="8686" style="--i:3">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Lidarr</span>
+                </span>
+                <span class="service-desc">Music collection, downloaded automatically</span>
+                <span class="card-meta">
+                    <span class="port">8686</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:9696" class="service-card prowlarr">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🔍</div>
-                    <div class="service-name">Prowlarr</div>
-                </div>
-                <p class="service-description">Indexer manager - Centralized index management</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        9696
+            <a href="http://localhost:6767" class="card" data-port="6767" style="--i:4">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Bazarr</span>
+                </span>
+                <span class="service-desc">Subtitles for Sonarr and Radarr</span>
+                <span class="card-meta">
+                    <span class="port">6767</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:6880" class="service-card aria-ng">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🎛️</div>
-                    <div class="service-name">Aria-Ng</div>
-                </div>
-                <p class="service-description">Modern web UI for Aria2 downloads</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        6880
+            <a href="http://localhost:9696" class="card" data-port="9696" style="--i:5">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Prowlarr</span>
+                </span>
+                <span class="service-desc">Indexer manager for the arr stack</span>
+                <span class="card-meta">
+                    <span class="port">9696</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:3923" class="service-card copyparty">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">📁</div>
-                    <div class="service-name">Copyparty</div>
-                </div>
-                <p class="service-description">File server - Easy sharing and browsing</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        3923
+            <a href="http://localhost:8096" class="card" data-port="8096" style="--i:6">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .002C8.826.002-1.398 18.537.16 21.666c1.56 3.129 22.14 3.094 23.682 0C25.384 18.573 15.177 0 12 0zm7.76 18.949c-1.008 2.028-14.493 2.05-15.514 0C3.224 16.9 9.92 4.755 12.003 4.755c2.081 0 8.77 12.166 7.759 14.196zM12 9.198c-1.054 0-4.446 6.15-3.93 7.189.518 1.04 7.348 1.027 7.86 0 .511-1.027-2.874-7.19-3.93-7.19z"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Jellyfin</span>
+                </span>
+                <span class="service-desc">Stream your media collection</span>
+                <span class="card-meta">
+                    <span class="port">8096</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:4560" class="service-card opencode">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🤖</div>
-                    <div class="service-name">OpenCode</div>
-                </div>
-                <p class="service-description">AI coding agent - Web UI cho các phiên làm việc</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        4560
+            <a href="http://localhost:3923" class="card" data-port="3923" style="--i:7">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Copyparty</span>
+                </span>
+                <span class="service-desc">File server for shared data</span>
+                <span class="card-meta">
+                    <span class="port">3923</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:8191" class="service-card flaresolverr">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🛡️</div>
-                    <div class="service-name">FlareSolverr</div>
-                </div>
-                <p class="service-description">Cloudflare bypass and anti-bot proxy</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        8191
+            <a href="http://localhost:6880" class="card" data-port="6880" style="--i:8">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">Aria-Ng</span>
+                </span>
+                <span class="service-desc">Web UI for Aria2 downloads</span>
+                <span class="card-meta">
+                    <span class="port">6880</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
 
-            <a href="http://localhost:8096" class="service-card jellyfin">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🎞️</div>
-                    <div class="service-name">Jellyfin</div>
-                </div>
-                <p class="service-description">Media server - Stream your collection</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        8096
+            <a href="http://localhost:8191" class="card" data-port="8191" style="--i:9">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
-            </a>
-
-            <a href="http://localhost:8686" class="service-card lidarr">
-                <div class="status-indicator"></div>
-                <div class="card-header">
-                    <div class="service-icon">🎵</div>
-                    <div class="service-name">Lidarr</div>
-                </div>
-                <p class="service-description">Music collection manager - Automated music downloads</p>
-                <div class="service-meta">
-                    <span class="port-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-                        </svg>
-                        8686
-                    </span>
-                    <span class="link-text">
-                        Open
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
-                </div>
+                    <span class="service-name">FlareSolverr</span>
+                </span>
+                <span class="service-desc">Cloudflare bypass proxy</span>
+                <span class="card-meta">
+                    <span class="port">8191</span>
+                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </span>
             </a>
         </main>
 
-        <footer>
-            <p>Media Server Dashboard v2.0 • Soft Light Theme</p>
-        </footer>
+        <footer>Served locally from vontar-h618</footer>
     </div>
 
     <script>
-        // Auto-detect base URL (localhost or IP) and update all service links
-        (function() {
-            const baseUrl = window.location.protocol + '//' + window.location.hostname;
+        (function () {
+            var base = window.location.protocol + '//' + window.location.hostname;
+            var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+            var countEl = document.getElementById('online-count');
+            var chip = document.getElementById('status-chip');
+            var online = 0;
+            var resolved = 0;
 
-            // Service port mapping
-            const services = {
-                'aria2-pro': ['6800', '6888'],
-                'sonarr': ['8989'],
-                'radarr': ['7878'],
-                'bazarr': ['6767'],
-                'prowlarr': ['9696'],
-                'aria-ng': ['6880'],
-                'copyparty': ['3923'],
-                'opencode': ['4560'],
-                'flaresolverr': ['8191'],
-                'jellyfin': ['8096'],
-                'lidarr': ['8686']
-            };
+            function setState(card, state) {
+                var dot = card.querySelector('.status');
+                dot.dataset.state = state;
+                dot.setAttribute('aria-label', state);
+                if (state === 'checking') return;
+                resolved++;
+                if (state === 'online') online++;
+                countEl.textContent = online + ' / ' + cards.length + ' online';
+                chip.dataset.live = online > 0;
+            }
 
-            // Update links for each service card
-            document.querySelectorAll('.service-card').forEach(card => {
-                const serviceClass = Array.from(card.classList)
-                    .find(cls => cls !== 'service-card' && services[cls]);
+            function probe(card) {
+                var port = card.dataset.port;
+                var ctrl = new AbortController();
+                var timer = setTimeout(function () { ctrl.abort(); }, 4000);
+                fetch(base + ':' + port + '/?_=' + Date.now(), {
+                    mode: 'no-cors',
+                    cache: 'no-store',
+                    signal: ctrl.signal
+                })
+                    .then(function () { setState(card, 'online'); })
+                    .catch(function () { setState(card, 'offline'); })
+                    .finally(function () { clearTimeout(timer); });
+            }
 
-                if (serviceClass && services[serviceClass]) {
-                    const primaryPort = services[serviceClass][0];
-                    card.href = baseUrl + ':' + primaryPort;
-                    // Open in new tab
-                    card.target = '_blank';
-                    card.rel = 'noopener noreferrer';
-                }
+            cards.forEach(function (card) {
+                card.href = base + ':' + card.dataset.port;
+                card.target = '_blank';
+                card.rel = 'noopener noreferrer';
+                probe(card);
             });
         })();
     </script>
