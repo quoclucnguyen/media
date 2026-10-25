@@ -1,6 +1,46 @@
+# =====================================================================
+# Media stack — cập nhật 10/2026: mặc định CHỈ chạy copyparty + media-dashboard.
+# Các service khác đã gán profile, TẮT mặc định — bật khi cần:
+#   docker compose up -d                       # chỉ copyparty + media-dashboard
+#   docker compose --profile bypass up -d      # + flaresolverr / byparr (chọn 1)
+#   docker compose --profile download up -d    # + aria2 / aria-ng / qbittorrent
+#   docker compose --profile arr up -d         # + sonarr / radarr / bazarr / lidarr / prowlarr
+#   docker compose --profile stream up -d      # + jellyfin
+#   docker compose --profile full up -d        # bật TẤT CẢ
+# Gộp nhóm: docker compose --profile arr --profile stream up -d
+# Tắt lại nhóm đã bật: docker compose --profile <nhóm> down
+# =====================================================================
+
 services:
+  # ===== Cloudflare bypass =====
+  # Không publish 8191 nữa (security: expose mọi interface, log chứa cookie).
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    profiles: ["bypass", "full"]
+    environment:
+      - LOG_LEVEL=info
+      - TZ=Asia/Ho_Chi_Minh
+      - BROWSER_WAIT_TIMEOUT=3   # default 1s quá ngắn trên host chậm
+      - DISABLE_MEDIA=true       # không tải ảnh/CSS khi giải challenge
+    mem_limit: 1g
+    restart: unless-stopped
+
+  # Drop-in thay FlareSolverr (API /v1 giống hệt). Mặc định tắt.
+  byparr:
+    image: ghcr.io/thephaseless/byparr:latest
+    container_name: byparr
+    profiles: ["bypass", "full"]
+    shm_size: "512mb"
+    mem_limit: 1g
+    restart: unless-stopped
+
+  # ===== Download =====
+  # aria2 giữ cho HTTP/FTP/magnet thủ công. *arr dùng qBittorrent (native + categories).
   aria2-pro:
     image: p3terx/aria2-pro
+    container_name: aria2-pro
+    profiles: ["download", "full"]
     environment:
       - PUID=1000
       - PGID=1000
@@ -20,51 +60,102 @@ services:
       - 6888:6888/udp
     restart: unless-stopped
 
+  # Client CHÍNH cho *arr. Mount CÙNG ROOT /mnt/ssd/data để hardlink hoạt động.
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    profiles: ["download", "full"]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Ho_Chi_Minh
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6889
+    volumes:
+      - /mnt/ssd/data/qbittorrent-config:/config
+      - /mnt/ssd/data:/mnt/ssd/data
+    ports:
+      - 8080:8080
+      - 6889:6889
+      - 6889:6889/udp
+    restart: unless-stopped
+
+  # ===== *ARR =====
+  # Mount 1 root /mnt/ssd/data (điều kiện hardlink). 2 mount legacy giữ lại
+  # trong giai đoạn chuyển tiếp — xóa sau khi cập nhật Root Folders trong app.
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    profiles: ["arr", "full"]
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
     volumes:
       - /mnt/ssd/data/sonarr-config:/config
-      - /mnt/ssd/data/downloads:/downloads
-      - /mnt/ssd/data/tv:/tv
+      - /mnt/ssd/data:/mnt/ssd/data
+      - /mnt/ssd/data/downloads:/downloads   # legacy — xóa sau khi ổn
+      - /mnt/ssd/data/tv:/tv                 # legacy — xóa sau khi ổn
     ports:
       - 8989:8989
     restart: unless-stopped
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    profiles: ["arr", "full"]
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
     volumes:
       - /mnt/ssd/data/radarr-config:/config
-      - /mnt/ssd/data/downloads:/downloads
-      - /mnt/ssd/data/movies:/movies
+      - /mnt/ssd/data:/mnt/ssd/data
+      - /mnt/ssd/data/downloads:/downloads   # legacy — xóa sau khi ổn
+      - /mnt/ssd/data/movies:/movies         # legacy — xóa sau khi ổn
     ports:
       - 7878:7878
     restart: unless-stopped
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    profiles: ["arr", "full"]
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Asia/Ho_Chi_Minh
     volumes:
       - /mnt/ssd/data/bazarr-config:/config
-      - /mnt/ssd/data/tv:/tv
-      - /mnt/ssd/data/movies:/movies
-      - /mnt/ssd/data/downloads:/downloads
+      - /mnt/ssd/data:/mnt/ssd/data
+      - /mnt/ssd/data/tv:/tv                 # legacy — xóa sau khi ổn
+      - /mnt/ssd/data/movies:/movies         # legacy — xóa sau khi ổn
+      - /mnt/ssd/data/downloads:/downloads   # legacy — xóa sau khi ổn
     ports:
       - 6767:6767
     restart: unless-stopped
 
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    profiles: ["arr", "full"]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - /mnt/ssd/data/lidarr/config:/config
+      - /mnt/ssd/data:/mnt/ssd/data
+      - /mnt/ssd/data/music:/music           # legacy — xóa sau khi ổn
+      - /mnt/ssd/data/downloads:/downloads   # legacy — xóa sau khi ổn
+    ports:
+      - 8686:8686
+    restart: unless-stopped
+
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    profiles: ["arr", "full"]
     environment:
       - PUID=1000
       - PGID=1000
@@ -75,37 +166,11 @@ services:
       - 9696:9696
     restart: unless-stopped
 
-  aria-ng:
-    image: p3terx/ariang
-    command: --port 6880
-    ports:
-      - 6880:6880
-    restart: unless-stopped
-
-  copyparty:
-    image: copyparty/ac
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Ho_Chi_Minh
-    ports:
-      - 3923:3923
-    volumes:
-      - /mnt/ssd/data:/w
-      - ./copyparty-config:/cfg
-    restart: unless-stopped
-
-  flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:latest
-    environment:
-      - LOG_LEVEL=info
-      - TZ=Asia/Ho_Chi_Minh
-    ports:
-      - 8191:8191
-    restart: unless-stopped
-
+  # ===== XEM / FILE / UI =====
   jellyfin:
     image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    profiles: ["stream", "full"]
     environment:
       - PUID=1000
       - PGID=1000
@@ -121,6 +186,29 @@ services:
       - /mnt/ssd/data/music:/media/music
     restart: unless-stopped
 
+  aria-ng:
+    image: p3terx/ariang
+    container_name: aria-ng
+    profiles: ["download", "full"]
+    command: --port 6880
+    ports:
+      - 6880:6880
+    restart: unless-stopped
+
+  copyparty:
+    image: copyparty/ac
+    container_name: copyparty
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - 3923:3923
+    volumes:
+      - /mnt/ssd/data:/w
+      - ./copyparty-config:/cfg
+    restart: unless-stopped
+
   dashboard:
     image: p3terx/darkhttpd
     container_name: media-dashboard
@@ -129,19 +217,4 @@ services:
     volumes:
       - ./html:/var/www/html:ro
     command: ["/var/www/html", "--port", "80"]
-    restart: unless-stopped
-
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Asia/Ho_Chi_Minh
-    volumes:
-      - /mnt/ssd/data/lidarr/config:/config
-      - /mnt/ssd/data/music:/music
-      - /mnt/ssd/data/downloads:/downloads
-    ports:
-      - 8686:8686
     restart: unless-stopped

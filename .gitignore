@@ -5,3 +5,4 @@ aria-ng-config/*
 bazarr-config/*
 data/*
 aria2-config/*
+*.bak-*
