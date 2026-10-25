@@ -302,6 +302,7 @@
         .service-card.prowlarr { --card-accent: var(--accent-purple); }
         .service-card.aria-ng { --card-accent: var(--accent-cyan); }
         .service-card.copyparty { --card-accent: var(--accent-pink); }
+        .service-card.opencode { --card-accent: var(--accent-green); }
         .service-card.flaresolverr { --card-accent: var(--accent-red); }
         .service-card.jellyfin { --card-accent: var(--accent-cyan); }
         .service-card.lidarr { --card-accent: var(--accent-pink); }
@@ -681,6 +682,29 @@
                 </div>
             </a>
 
+            <a href="http://localhost:4560" class="service-card opencode">
+                <div class="status-indicator"></div>
+                <div class="card-header">
+                    <div class="service-icon">🤖</div>
+                    <div class="service-name">OpenCode</div>
+                </div>
+                <p class="service-description">AI coding agent - Web UI cho các phiên làm việc</p>
+                <div class="service-meta">
+                    <span class="port-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                        4560
+                    </span>
+                    <span class="link-text">
+                        Open
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+
             <a href="http://localhost:8191" class="service-card flaresolverr">
                 <div class="status-indicator"></div>
                 <div class="card-header">
@@ -770,6 +794,7 @@
                 'prowlarr': ['9696'],
                 'aria-ng': ['6880'],
                 'copyparty': ['3923'],
+                'opencode': ['4560'],
                 'flaresolverr': ['8191'],
                 'jellyfin': ['8096'],
                 'lidarr': ['8686']
