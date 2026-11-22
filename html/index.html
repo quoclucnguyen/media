@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
             font-weight: 300 800;
             font-display: swap;
             src: url('/fonts/outfit-latin.woff2') format('woff2');
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2195, U+FEFF, U+FFFD;
         }
         @font-face {
             font-family: 'Outfit';
@@ -21,7 +21,7 @@
             font-weight: 300 800;
             font-display: swap;
             src: url('/fonts/outfit-latin-ext.woff2') format('woff2');
-            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2195, U+FEFF, U+FFFD;
         }
         @font-face {
             font-family: 'JetBrains Mono';
@@ -29,7 +29,7 @@
             font-weight: 400 700;
             font-display: swap;
             src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
-            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2195, U+FEFF, U+FFFD;
         }
 
         * {
@@ -296,6 +296,13 @@
             padding: 4px 8px;
         }
 
+        .meta-right {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-left: auto;
+        }
+
         .open {
             display: inline-flex;
             align-items: center;
@@ -313,6 +320,51 @@
 
         .card:hover .open svg {
             transform: translateX(2px);
+        }
+
+        /* Switch: bật/tắt container thật (qua API Docker socket) */
+        .switch {
+            position: relative;
+            width: 34px;
+            height: 20px;
+            flex-shrink: 0;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: var(--tile);
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .switch .knob {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--text-3);
+            transition: left 0.2s, background 0.2s;
+        }
+
+        .switch[data-on="true"] {
+            background: var(--accent-weak);
+            border-color: var(--accent);
+        }
+
+        .switch[data-on="true"] .knob {
+            left: 16px;
+            background: var(--accent);
+        }
+
+        .switch:disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
+        .switch:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
         }
 
         footer {
@@ -350,136 +402,88 @@
         <header class="top">
             <div>
                 <h1>Media Dashboard</h1>
-                <p class="subtitle">All home services in one place</p>
+                <p class="subtitle">Tất cả dịch vụ trong nhà, một nơi điều khiển</p>
             </div>
             <span class="chip" id="status-chip">
                 <span class="chip-dot"></span>
-                <span id="online-count">checking&hellip;</span>
+                <span id="online-count">đang kiểm tra&hellip;</span>
             </span>
         </header>
 
         <main class="grid">
-            <a href="http://localhost:6800" class="card" data-port="6800" style="--i:0">
+            <a href="#" class="card" data-port="8787" data-key="kino-web" style="--i:0">
                 <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
                 <span class="card-head">
                     <span class="icon-tile">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 7v10l7.8-5z" fill="currentColor"/><path d="M4 8.6h3.6M3.4 12h3.2M4 15.4h3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
                     </span>
-                    <span class="service-name">Aria2 Pro</span>
+                    <span class="service-name">Kino Web</span>
                 </span>
-                <span class="service-desc">Download manager with RPC control</span>
+                <span class="service-desc">Duyệt phim &amp; tải vietsub — mini-Stremio</span>
                 <span class="card-meta">
-                    <span class="port">6800</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    <span class="port">8787</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Kino Web"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
                 </span>
             </a>
 
-            <a href="http://localhost:8080" class="card" data-port="8080" style="--i:1">
-                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
-                <span class="card-head">
-                    <span class="icon-tile">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.911 23.994c-1.31 0-2.605-.232-3.831-.705-3.4-1.024-6.2-3.865-7.433-7.58-1.23-3.708-.685-7.654 1.459-10.554C4.062 2.038 7.677.094 11.742.008c4.064-.079 7.758 1.703 9.882 4.785a12.066 12.066 0 0 1 2.369 7.145c.138 3.733-1.75 7.368-5.052 9.728-2.147 1.535-4.61 2.328-7.03 2.328zm.11-22.314c-.081 0-.162 0-.244.002-3.5.074-6.599 1.725-8.29 4.415-1.856 2.516-2.31 5.893-1.25 9.086 1.06 3.197 3.448 5.636 6.386 6.523 3.025 1.165 6.496.633 9.345-1.402 2.847-2.035 4.473-5.144 4.351-8.318v-.032c0-2.214-.73-4.41-2.055-6.185-1.78-2.58-4.84-4.09-8.243-4.09zM9.406 20.246v-4.578a2.663 2.663 0 0 1-.952.863 2.573 2.573 0 0 1-1.29.344c-1.016 0-1.893-.444-2.63-1.33-.731-.887-1.097-2.102-1.097-3.646 0-.939.148-1.781.444-2.527.301-.746.734-1.309 1.299-1.69A3.26 3.26 0 0 1 7.052 7.1c1.058 0 1.891.487 2.5 1.46v-1.25h1.306v12.935H9.406zm-4.477-8.285c0 1.203.232 2.108.694 2.711.463.6 1.016.9 1.662.9.619 0 1.15-.286 1.597-.855.446-.576.67-1.447.67-2.615 0-1.245-.237-2.18-.71-2.81-.468-.627-1.02-.941-1.654-.941-.63 0-1.164.293-1.605.88-.435.581-.654 1.491-.654 2.73m9.55 4.702h-1.346V3.755h1.452v4.604c.613-.84 1.395-1.258 2.347-1.258.526 0 1.024.117 1.492.351.464.222.864.558 1.161.978.307.416.546.922.718 1.514.172.593.258 1.227.258 1.902 0 1.603-.363 2.841-1.088 3.716-.727.874-1.598 1.312-2.614 1.312-1.011 0-1.804-.46-2.379-1.382v1.17m-.016-4.746c0 1.122.14 1.932.42 2.432.456.815 1.074 1.223 1.854 1.223.635 0 1.183-.3 1.646-.898.462-.604.693-1.503.693-2.695 0-1.22-.224-2.122-.67-2.703-.44-.58-.975-.872-1.605-.872-.634 0-1.182.303-1.645.907-.463.6-.694 1.468-.694 2.607"/></svg>
-                    </span>
-                    <span class="service-name">qBittorrent</span>
-                </span>
-                <span class="service-desc">Torrent client with web UI</span>
-                <span class="card-meta">
-                    <span class="port">8080</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-                </span>
-            </a>
-
-            <a href="http://localhost:8989" class="card" data-port="8989" style="--i:2">
-                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
-                <span class="card-head">
-                    <span class="icon-tile">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.212 4.282c1.851 2.204 2.777 4.776 2.777 7.718 0 2.848-.867 5.344-2.602 7.489a934.355 934.355 0 0 1-2.101-2.095c-1.477-1.477-1.792-3.293-1.792-5.278 0-2.224.127-3.486 1.577-4.935l2.478-2.478a13.209 13.209 0 0 0-.337-.421Zm-17.7 16.193C1.708 18.678.6 16.59.188 14.213A11.84 11.84 0 0 1 .011 12c0-.28.006-.548.017-.802 0-.026.007-.052.022-.078.153-2.601 1.076-4.889 2.767-6.865-.108.127-.214.256-.316.387 0 0 1.351 1.346 2.329 2.323 1.408 1.409 1.726 3.215 1.726 5.151 0 1.985-.249 3.762-1.781 5.295-1.035 1.035-2.119 2.124-2.119 2.124.112.136.229.271.349.404.029-.027 1.297-1.348 2.123-2.175 1.638-1.637 1.928-3.528 1.928-5.648 0-2.072-.365-3.997-1.873-5.504a620.045 620.045 0 0 0-2.366-2.357c.168-.196.342-.388.523-.576l3.117 3.106-.194.195 1.903 1.898.547-.549L6.81 6.432l-.196.196L3.495 3.52c.01-.009.436-.416.643-.597.009.011 2.28 2.283 2.28 2.283 1.538 1.537 3.5 1.955 5.621 1.955 2.18 0 4.134-.442 5.731-2.038.907-.908 2.153-2.149 2.162-2.16.17.151.491.461.56.528l.013.013-3.111 3.028-.001.002-.197-.194-1.876 1.903.552.543 1.875-1.903-.197-.194 3.109-3.026c.193.203.377.41.553.619-.03.025-2.495 2.546-2.495 2.546-1.556 1.556-1.723 2.9-1.723 5.288 0 2.121.361 4.054 1.939 5.632a576.91 576.91 0 0 0 2.133 2.124c-.183.208-.599.645-.613.66l-3.066-3.174.195-.196-1.995-1.986-.546.549 1.995 1.986.195-.196 3.065 3.172c-.021.019-.385.362-.552.506-.01-.013-1.974-1.978-1.974-1.978-1.842-1.842-3.299-2.039-5.731-2.039-2.338 0-3.92.239-5.632 1.95-.944.944-2.078 2.085-2.089 2.099-.275-.23-.649-.594-.649-.594l3.019-3.024.199.192 1.854-1.925-.558-.538-1.854 1.926.199.191-3.016 3.022ZM12 8.672A3.33 3.33 0 0 0 8.672 12 3.33 3.33 0 0 0 12 15.328 3.33 3.33 0 0 0 15.328 12 3.33 3.33 0 0 0 12 8.672ZM4.52 2.6C6.665.867 9.162 0 12.011 0c2.88 0 5.394.88 7.541 2.639 0 0-1.215 1.209-2.136 2.13-1.496 1.496-3.334 1.892-5.377 1.892-1.985 0-3.829-.37-5.267-1.809L4.52 2.6Zm14.837 18.909a9.507 9.507 0 0 1-.342.256C16.994 23.255 14.659 24 12.011 24c-2.652 0-4.983-.745-6.993-2.235-.104-.074-.208-.15-.31-.227 0 0 1.096-1.101 2.053-2.058 1.602-1.602 3.09-1.804 5.278-1.804 2.28 0 3.651.166 5.377 1.892l1.941 1.941Z"/></svg>
-                    </span>
-                    <span class="service-name">Sonarr</span>
-                </span>
-                <span class="service-desc">TV series, downloaded and organized automatically</span>
-                <span class="card-meta">
-                    <span class="port">8989</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-                </span>
-            </a>
-
-            <a href="http://localhost:7878" class="card" data-port="7878" style="--i:3">
-                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
-                <span class="card-head">
-                    <span class="icon-tile">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5.274 0C3.189.039 1.19 1.547 1.19 4.705l.184 14.518c0 1.47 1.103 2.205 2.573 2.021L3.764 3.786c0-1.654.919-1.838 2.022-1.103l14.7 8.27c1.103.734 1.655 1.47 1.838 2.756.92-1.654.552-4.043-1.286-5.33L7.991.846A4.559 4.559 0 0 0 5.274.001zm1.982 6.91-.184 10.107 9.004-5.146Zm13.598 6.064-15.068 8.82c-.92.552-2.022.736-3.124.368.918 1.47 3.307 2.389 5.145 1.47l12.68-7.35c1.102-.736 1.286-2.022.367-3.308z"/></svg>
-                    </span>
-                    <span class="service-name">Radarr</span>
-                </span>
-                <span class="service-desc">Movie collection, downloaded automatically</span>
-                <span class="card-meta">
-                    <span class="port">7878</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-                </span>
-            </a>
-
-            <a href="http://localhost:8686" class="card" data-port="8686" style="--i:4">
-                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
-                <span class="card-head">
-                    <span class="icon-tile">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-                    </span>
-                    <span class="service-name">Lidarr</span>
-                </span>
-                <span class="service-desc">Music collection, downloaded automatically</span>
-                <span class="card-meta">
-                    <span class="port">8686</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-                </span>
-            </a>
-
-            <a href="http://localhost:6767" class="card" data-port="6767" style="--i:5">
-                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
-                <span class="card-head">
-                    <span class="icon-tile">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    </span>
-                    <span class="service-name">Bazarr</span>
-                </span>
-                <span class="service-desc">Subtitles for Sonarr and Radarr</span>
-                <span class="card-meta">
-                    <span class="port">6767</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-                </span>
-            </a>
-
-            <a href="http://localhost:9696" class="card" data-port="9696" style="--i:6">
-                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
-                <span class="card-head">
-                    <span class="icon-tile">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </span>
-                    <span class="service-name">Prowlarr</span>
-                </span>
-                <span class="service-desc">Indexer manager for the arr stack</span>
-                <span class="card-meta">
-                    <span class="port">9696</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-                </span>
-            </a>
-
-            <a href="http://localhost:8096" class="card" data-port="8096" style="--i:7">
+            <a href="#" class="card" data-port="8096" data-key="kino-jf" style="--i:1">
                 <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
                 <span class="card-head">
                     <span class="icon-tile">
                         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .002C8.826.002-1.398 18.537.16 21.666c1.56 3.129 22.14 3.094 23.682 0C25.384 18.573 15.177 0 12 0zm7.76 18.949c-1.008 2.028-14.493 2.05-15.514 0C3.224 16.9 9.92 4.755 12.003 4.755c2.081 0 8.77 12.166 7.759 14.196zM12 9.198c-1.054 0-4.446 6.15-3.93 7.189.518 1.04 7.348 1.027 7.86 0 .511-1.027-2.874-7.19-3.93-7.19z"/></svg>
                     </span>
-                    <span class="service-name">Jellyfin</span>
+                    <span class="service-name">Kino Jellyfin</span>
                 </span>
-                <span class="service-desc">Stream your media collection</span>
+                <span class="service-desc">Phim Kino phát lên TV box qua LAN</span>
                 <span class="card-meta">
                     <span class="port">8096</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Kino Jellyfin"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
                 </span>
             </a>
 
-            <a href="http://localhost:3923" class="card" data-port="3923" style="--i:8">
+            <a href="#" class="card" data-port="8081" data-key="kino-qbit" style="--i:2">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.911 23.994c-1.31 0-2.605-.232-3.831-.705-3.4-1.024-6.2-3.865-7.433-7.58-1.23-3.708-.685-7.654 1.459-10.554C4.062 2.038 7.677.094 11.742.008c4.064-.079 7.758 1.703 9.882 4.785a12.066 12.066 0 0 1 2.369 7.145c.138 3.733-1.75 7.368-5.052 9.728-2.147 1.535-4.61 2.328-7.03 2.328zm.11-22.314c-.081 0-.162 0-.244.002-3.5.074-6.599 1.725-8.29 4.415-1.856 2.516-2.31 5.893-1.25 9.086 1.06 3.197 3.448 5.636 6.386 6.523 3.025 1.165 6.496.633 9.345-1.402 2.847-2.035 4.473-5.144 4.351-8.318v-.032c0-2.214-.73-4.41-2.055-6.185-1.78-2.58-4.84-4.09-8.243-4.09zM9.406 20.246v-4.578a2.663 2.663 0 0 1-.952.863 2.573 2.573 0 0 1-1.29.344c-1.016 0-1.893-.444-2.63-1.33-.731-.887-1.097-2.102-1.097-3.646 0-.939.148-1.781.444-2.527.301-.746.734-1.309 1.299-1.69A3.26 3.26 0 0 1 7.052 7.1c1.058 0 1.891.487 2.5 1.46v-1.25h1.306v12.935H9.406zm-4.477-8.285c0 1.203.232 2.108.694 2.711.463.6 1.016.9 1.662.9.619 0 1.15-.286 1.597-.855.446-.576.67-1.447.67-2.615 0-1.245-.237-2.18-.71-2.81-.468-.627-1.02-.941-1.654-.941-.63 0-1.164.293-1.605.88-.435.581-.654 1.491-.654 2.73m9.55 4.702h-1.346V3.755h1.452v4.604c.613-.84 1.395-1.258 2.347-1.258.526 0 1.024.117 1.492.351.464.222.864.558 1.161.978.307.416.546.922.718 1.514.172.593.258 1.227.258 1.902 0 1.603-.363 2.841-1.088 3.716-.727.874-1.598 1.312-2.614 1.312-1.011 0-1.804-.46-2.379-1.382v1.17m-.016-4.746c0 1.122.14 1.932.42 2.432.456.815 1.074 1.223 1.854 1.223.635 0 1.183-.3 1.646-.898.462-.604.693-1.503.693-2.695 0-1.22-.224-2.122-.67-2.703-.44-.58-.975-.872-1.605-.872-.634 0-1.182.303-1.645.907-.463.6-.694 1.468-.694 2.607"/></svg>
+                    </span>
+                    <span class="service-name">Kino qBittorrent</span>
+                </span>
+                <span class="service-desc">Torrent engine của Kino</span>
+                <span class="card-meta">
+                    <span class="port">8081</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Kino qBittorrent"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="4533" data-key="navidrome" style="--i:3">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </span>
+                    <span class="service-name">Navidrome</span>
+                </span>
+                <span class="service-desc">Nghe nhạc — stream file gốc, không transcode</span>
+                <span class="card-meta">
+                    <span class="port">4533</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Navidrome"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="3923" data-key="copyparty" style="--i:4">
                 <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
                 <span class="card-head">
                     <span class="icon-tile">
@@ -487,14 +491,53 @@
                     </span>
                     <span class="service-name">Copyparty</span>
                 </span>
-                <span class="service-desc">File server for shared data</span>
+                <span class="service-desc">File server — APK Jellyfin &amp; chia sẻ file</span>
                 <span class="card-meta">
                     <span class="port">3923</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Copyparty"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
                 </span>
             </a>
 
-            <a href="http://localhost:6880" class="card" data-port="6880" style="--i:9">
+            <a href="#" class="card" data-port="8080" data-key="qbittorrent" style="--i:5">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.911 23.994c-1.31 0-2.605-.232-3.831-.705-3.4-1.024-6.2-3.865-7.433-7.58-1.23-3.708-.685-7.654 1.459-10.554C4.062 2.038 7.677.094 11.742.008c4.064-.079 7.758 1.703 9.882 4.785a12.066 12.066 0 0 1 2.369 7.145c.138 3.733-1.75 7.368-5.052 9.728-2.147 1.535-4.61 2.328-7.03 2.328zm.11-22.314c-.081 0-.162 0-.244.002-3.5.074-6.599 1.725-8.29 4.415-1.856 2.516-2.31 5.893-1.25 9.086 1.06 3.197 3.448 5.636 6.386 6.523 3.025 1.165 6.496.633 9.345-1.402 2.847-2.035 4.473-5.144 4.351-8.318v-.032c0-2.214-.73-4.41-2.055-6.185-1.78-2.58-4.84-4.09-8.243-4.09zM9.406 20.246v-4.578a2.663 2.663 0 0 1-.952.863 2.573 2.573 0 0 1-1.29.344c-1.016 0-1.893-.444-2.63-1.33-.731-.887-1.097-2.102-1.097-3.646 0-.939.148-1.781.444-2.527.301-.746.734-1.309 1.299-1.69A3.26 3.26 0 0 1 7.052 7.1c1.058 0 1.891.487 2.5 1.46v-1.25h1.306v12.935H9.406zm-4.477-8.285c0 1.203.232 2.108.694 2.711.463.6 1.016.9 1.662.9.619 0 1.15-.286 1.597-.855.446-.576.67-1.447.67-2.615 0-1.245-.237-2.18-.71-2.81-.468-.627-1.02-.941-1.654-.941-.63 0-1.164.293-1.605.88-.435.581-.654 1.491-.654 2.73m9.55 4.702h-1.346V3.755h1.452v4.604c.613-.84 1.395-1.258 2.347-1.258.526 0 1.024.117 1.492.351.464.222.864.558 1.161.978.307.416.546.922.718 1.514.172.593.258 1.227.258 1.902 0 1.603-.363 2.841-1.088 3.716-.727.874-1.598 1.312-2.614 1.312-1.011 0-1.804-.46-2.379-1.382v1.17m-.016-4.746c0 1.122.14 1.932.42 2.432.456.815 1.074 1.223 1.854 1.223.635 0 1.183-.3 1.646-.898.462-.604.693-1.503.693-2.695 0-1.22-.224-2.122-.67-2.703-.44-.58-.975-.872-1.605-.872-.634 0-1.182.303-1.645.907-.463.6-.694 1.468-.694 2.607"/></svg>
+                    </span>
+                    <span class="service-name">qBittorrent</span>
+                </span>
+                <span class="service-desc">Torrent client bộ cũ — đã thay bằng Kino</span>
+                <span class="card-meta">
+                    <span class="port">8080</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt qBittorrent"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="6800" data-key="aria2" style="--i:6">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </span>
+                    <span class="service-name">Aria2 Pro</span>
+                </span>
+                <span class="service-desc">Download manager RPC — HTTP/FTP/magnet</span>
+                <span class="card-meta">
+                    <span class="port">6800</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Aria2 Pro"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="6880" data-key="aria-ng" style="--i:7">
                 <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
                 <span class="card-head">
                     <span class="icon-tile">
@@ -502,14 +545,107 @@
                     </span>
                     <span class="service-name">Aria-Ng</span>
                 </span>
-                <span class="service-desc">Web UI for Aria2 downloads</span>
+                <span class="service-desc">Web UI cho Aria2</span>
                 <span class="card-meta">
                     <span class="port">6880</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Aria-Ng"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
                 </span>
             </a>
 
-            <a href="http://localhost:8191" class="card" data-port="8191" style="--i:10">
+            <a href="#" class="card" data-port="8989" data-key="sonarr" style="--i:8">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.212 4.282c1.851 2.204 2.777 4.776 2.777 7.718 0 2.848-.867 5.344-2.602 7.489a934.355 934.355 0 0 1-2.101-2.095c-1.477-1.477-1.792-3.293-1.792-5.278 0-2.224.127-3.486 1.577-4.935l2.478-2.478a13.209 13.209 0 0 0-.337-.421Zm-17.7 16.193C1.708 18.678.6 16.59.188 14.213A11.84 11.84 0 0 1 .011 12c0-.28.006-.548.017-.802 0-.026.007-.052.022-.078.153-2.601 1.076-4.889 2.767-6.865-.108.127-.214.256-.316.387 0 0 1.351 1.346 2.329 2.323 1.408 1.409 1.726 3.215 1.726 5.151 0 1.985-.249 3.762-1.781 5.295-1.035 1.035-2.119 2.124-2.119 2.124.112.136.229.271.349.404.029-.027 1.297-1.348 2.123-2.175 1.638-1.637 1.928-3.528 1.928-5.648 0-2.072-.365-3.997-1.873-5.504a620.045 620.045 0 0 0-2.366-2.357c.168-.196.342-.388.523-.576l3.117 3.106-.194.195 1.903 1.898.547-.549L6.81 6.432l-.196.196L3.495 3.52c.01-.009.436-.416.643-.597.009.011 2.28 2.283 2.28 2.283 1.538 1.537 3.5 1.955 5.621 1.955 2.18 0 4.134-.442 5.731-2.038.907-.908 2.153-2.149 2.162-2.16.17.151.491.461.56.528l.013.013-3.111 3.028-.001.002-.197-.194-1.876 1.903.552.543 1.875-1.903-.197-.194 3.109-3.026c.193.203.377.41.553.619-.03.025-2.495 2.546-2.495 2.546-1.556 1.556-1.723 2.9-1.723 5.288 0 2.121.361 4.054 1.939 5.632a576.91 576.91 0 0 0 2.133 2.124c-.183.208-.599.645-.613.66l-3.066-3.174.195-.196-1.995-1.986-.546.549 1.995 1.986.195-.196 3.065 3.172c-.021.019-.385.362-.552.506-.01-.013-1.974-1.978-1.974-1.978-1.842-1.842-3.299-2.039-5.731-2.039-2.338 0-3.92.239-5.632 1.95-.944.944-2.078 2.085-2.089 2.099-.275-.23-.649-.594-.649-.594l3.019-3.024.199.192 1.854-1.925-.558-.538-1.854 1.926.199.191-3.016 3.022ZM12 8.672A3.33 3.33 0 0 0 8.672 12 3.33 3.33 0 0 0 12 15.328 3.33 3.33 0 0 0 15.328 12 3.33 3.33 0 0 0 12 8.672ZM4.52 2.6C6.665.867 9.162 0 12.011 0c2.88 0 5.394.88 7.541 2.639 0 0-1.215 1.209-2.136 2.13-1.496 1.496-3.334 1.892-5.377 1.892-1.985 0-3.829-.37-5.267-1.809L4.52 2.6Zm14.837 18.909a9.507 9.507 0 0 1-.342.256C16.994 23.255 14.659 24 12.011 24c-2.652 0-4.983-.745-6.993-2.235-.104-.074-.208-.15-.31-.227 0 0 1.096-1.101 2.053-2.058 1.602-1.602 3.09-1.804 5.278-1.804 2.28 0 3.651.166 5.377 1.892l1.941 1.941Z"/></svg>
+                    </span>
+                    <span class="service-name">Sonarr</span>
+                </span>
+                <span class="service-desc">Tự tải &amp; sắp xếp phim bộ</span>
+                <span class="card-meta">
+                    <span class="port">8989</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Sonarr"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="7878" data-key="radarr" style="--i:9">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5.274 0C3.189.039 1.19 1.547 1.19 4.705l.184 14.518c0 1.47 1.103 2.205 2.573 2.021L3.764 3.786c0-1.654.919-1.838 2.022-1.103l14.7 8.27c1.103.734 1.655 1.47 1.838 2.756.92-1.654.552-4.043-1.286-5.33L7.991.846A4.559 4.559 0 0 0 5.274.001zm1.982 6.91-.184 10.107 9.004-5.146Zm13.598 6.064-15.068 8.82c-.92.552-2.022.736-3.124.368.918 1.47 3.307 2.389 5.145 1.47l12.68-7.35c1.102-.736 1.286-2.022.367-3.308z"/></svg>
+                    </span>
+                    <span class="service-name">Radarr</span>
+                </span>
+                <span class="service-desc">Tự tải &amp; sắp xếp phim lẻ</span>
+                <span class="card-meta">
+                    <span class="port">7878</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Radarr"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="6767" data-key="bazarr" style="--i:10">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </span>
+                    <span class="service-name">Bazarr</span>
+                </span>
+                <span class="service-desc">Vietsub tự động cho Sonarr/Radarr</span>
+                <span class="card-meta">
+                    <span class="port">6767</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Bazarr"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="8686" data-key="lidarr" style="--i:11">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                    </span>
+                    <span class="service-name">Lidarr</span>
+                </span>
+                <span class="service-desc">Tự tải &amp; sắp xếp nhạc</span>
+                <span class="card-meta">
+                    <span class="port">8686</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Lidarr"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="9696" data-key="prowlarr" style="--i:12">
+                <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
+                <span class="card-head">
+                    <span class="icon-tile">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </span>
+                    <span class="service-name">Prowlarr</span>
+                </span>
+                <span class="service-desc">Quản lý indexer cho bộ *arr</span>
+                <span class="card-meta">
+                    <span class="port">9696</span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt Prowlarr"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
+                </span>
+            </a>
+
+            <a href="#" class="card" data-port="8191" data-key="flaresolverr" style="--i:13">
                 <span class="status" data-state="checking" role="img" aria-label="Checking"></span>
                 <span class="card-head">
                     <span class="icon-tile">
@@ -520,12 +656,15 @@
                 <span class="service-desc">Cloudflare bypass proxy</span>
                 <span class="card-meta">
                     <span class="port">8191</span>
-                    <span class="open">Open<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    <span class="meta-right">
+                        <button class="switch" data-on="false" aria-label="Bật/tắt FlareSolverr"><span class="knob"></span></button>
+                        <span class="open">Mở<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                    </span>
                 </span>
             </a>
         </main>
 
-        <footer>Served locally from vontar-h618</footer>
+        <footer>Chạy tại chỗ trên vontar-h618 — công tắc điều khiển thẳng container Docker</footer>
     </div>
 
     <script>
@@ -534,18 +673,21 @@
             var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
             var countEl = document.getElementById('online-count');
             var chip = document.getElementById('status-chip');
-            var online = 0;
-            var resolved = 0;
+
+            function recount() {
+                var online = 0;
+                cards.forEach(function (card) {
+                    if (card.querySelector('.status').dataset.state === 'online') online++;
+                });
+                countEl.textContent = online + ' / ' + cards.length + ' online';
+                chip.dataset.live = online > 0 ? 'true' : 'false';
+            }
 
             function setState(card, state) {
                 var dot = card.querySelector('.status');
                 dot.dataset.state = state;
                 dot.setAttribute('aria-label', state);
-                if (state === 'checking') return;
-                resolved++;
-                if (state === 'online') online++;
-                countEl.textContent = online + ' / ' + cards.length + ' online';
-                chip.dataset.live = online > 0;
+                if (state !== 'checking') recount();
             }
 
             function probe(card) {
@@ -562,12 +704,78 @@
                     .finally(function () { clearTimeout(timer); });
             }
 
+            /* ── công tắc container ── */
+            function cardTitle(card) {
+                var el = card.querySelector('.service-name');
+                return el ? el.textContent : card.dataset.key;
+            }
+
+            function applyServices(services) {
+                services.forEach(function (s) {
+                    var card = document.querySelector('.card[data-key="' + s.key + '"]');
+                    if (!card) return;
+                    var sw = card.querySelector('.switch');
+                    if (!sw) return;
+                    if (s.state === 'missing') {
+                        sw.disabled = true;
+                        sw.title = 'Chưa tạo — bật bằng docker compose (profile tương ứng)';
+                    } else if (sw.dataset.pending !== '1') {
+                        sw.disabled = false;
+                        sw.dataset.on = s.state === 'running' ? 'true' : 'false';
+                        sw.title = s.state === 'running' ? 'Đang chạy — bấm để tắt' : 'Đã tắt — bấm để bật';
+                    }
+                    sw.setAttribute('aria-label', (s.state === 'running' ? 'Tắt ' : 'Bật ') + cardTitle(card));
+                });
+            }
+
+            function pollServices() {
+                fetch('/api/services', { cache: 'no-store' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (d) { applyServices(d.services || []); })
+                    .catch(function () {});
+            }
+
+            function toggleService(card, sw) {
+                var key = card.dataset.key;
+                var turningOff = sw.dataset.on === 'true';
+                if (turningOff && !window.confirm('Tắt ' + cardTitle(card) + '?')) return;
+                sw.dataset.pending = '1';
+                sw.disabled = true;
+                fetch('/api/services/' + key + (turningOff ? '/stop' : '/start'), { method: 'POST', cache: 'no-store' })
+                    .then(function (r) {
+                        return r.json().then(function (d) { return { ok: r.ok, d: d }; });
+                    })
+                    .then(function (res) {
+                        if (!res.ok && res.d && res.d.error) window.alert(res.d.error);
+                    })
+                    .catch(function () { window.alert('Không gọi được API dashboard'); })
+                    .finally(function () {
+                        sw.dataset.pending = '0';
+                        pollServices();
+                        probe(card);
+                    });
+            }
+
             cards.forEach(function (card) {
                 card.href = base + ':' + card.dataset.port;
                 card.target = '_blank';
                 card.rel = 'noopener noreferrer';
                 probe(card);
+                var sw = card.querySelector('.switch');
+                if (sw) {
+                    sw.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleService(card, sw);
+                    });
+                }
             });
+
+            pollServices();
+            setInterval(function () {
+                cards.forEach(probe);
+                pollServices();
+            }, 15000);
         })();
     </script>
 </body>

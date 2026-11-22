@@ -5,7 +5,7 @@
 #   docker compose --profile bypass up -d      # + flaresolverr / byparr (chọn 1)
 #   docker compose --profile download up -d    # + aria2 / aria-ng / qbittorrent
 #   docker compose --profile arr up -d         # + sonarr / radarr / bazarr / lidarr / prowlarr
-#   docker compose --profile stream up -d      # + jellyfin
+#   docker compose --profile stream up -d      # + jellyfin + navidrome (nhạc, :4533)
 #   docker compose --profile full up -d        # bật TẤT CẢ
 # Gộp nhóm: docker compose --profile arr --profile stream up -d
 # Tắt lại nhóm đã bật: docker compose --profile <nhóm> down
@@ -166,6 +166,25 @@ services:
       - 9696:9696
     restart: unless-stopped
 
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Ho_Chi_Minh
+      - ND_SCANNER_SCHEDULE=@every 1h        # scan thư viện mỗi giờ (ND_SCANSCHEDULE cũ đã hủy)
+      - ND_SCANNER_PURGEMISSING=always       # dọn track đã xóa khỏi DB sau mỗi scan
+      - ND_DEFAULTTRANSCODINGFORMAT=raw      # stream file gốc, không transcode
+      - ND_DEFAULTDOWNSAMPLINGFORMAT=raw     # client xin giảm bitrate vẫn trả file gốc
+    volumes:
+      - /mnt/ssd/data/navidrome-config:/data
+      - /mnt/ssd/data/music:/music:ro
+    ports:
+      - 4533:4533
+    mem_limit: 512m
+    restart: unless-stopped
+
   # ===== XEM / FILE / UI =====
   jellyfin:
     image: jellyfin/jellyfin:latest
@@ -209,12 +228,17 @@ services:
       - ./copyparty-config:/cfg
     restart: unless-stopped
 
+  # Dashboard: file tĩnh + API bật/tắt container qua docker.sock (dashboard.py).
+  # python:3.12-alpine pull sẵn — KHÔNG build trên hermes (SSD không hỗ trợ xattr).
   dashboard:
-    image: p3terx/darkhttpd
+    image: python:3.12-alpine
     container_name: media-dashboard
     ports:
       - "80:80"
     volumes:
       - ./html:/var/www/html:ro
-    command: ["/var/www/html", "--port", "80"]
+      - ./dashboard.py:/srv/dashboard.py:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: ["python", "-u", "/srv/dashboard.py"]
+    mem_limit: 64m
     restart: unless-stopped
