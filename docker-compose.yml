@@ -60,24 +60,28 @@ services:
       - 6888:6888/udp
     restart: unless-stopped
 
-  # Client CHÍNH cho *arr. Mount CÙNG ROOT /mnt/ssd/data để hardlink hoạt động.
+  # Engine torrent DÙNG CHUNG (chạy mặc định, không profile) — Kino dùng qua
+  # API (category "kino", save /data/downloads = /mnt/ssd/kino/downloads,
+  # network media-shared) và các dịch vụ khác (*arr, aria2… dùng sau).
+  # Mount CÙNG ROOT /mnt/ssd/data để hardlink hoạt động cho *arr.
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
-    profiles: ["download", "full"]
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Asia/Ho_Chi_Minh
+      - TZ=Asia/Ho_Cho_Minh
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6889
     volumes:
       - /mnt/ssd/data/qbittorrent-config:/config
       - /mnt/ssd/data:/mnt/ssd/data
+      - /mnt/ssd/kino/downloads:/data/downloads
     ports:
       - 8080:8080
       - 6889:6889
       - 6889:6889/udp
+    networks: [default, shared]
     restart: unless-stopped
 
   # ===== *ARR =====
@@ -242,3 +246,9 @@ services:
     command: ["python", "-u", "/srv/dashboard.py"]
     mem_limit: 64m
     restart: unless-stopped
+
+# network dùng chung — kino webapp join để nói chuyện qbittorrent trong nội bộ docker
+networks:
+  shared:
+    external: true
+    name: media-shared

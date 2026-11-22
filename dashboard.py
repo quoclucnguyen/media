@@ -20,7 +20,6 @@ SELF = "media-dashboard"  # không cho tự tắt — mất điều khiển
 SERVICES = {
     "kino-web": "kino-web",
     "kino-jf": "kino-jf",
-    "kino-qbit": "kino-qbit",
     "navidrome": "navidrome",
     "copyparty": "copyparty",
     # stack cũ — profile-gated, container có thể chưa tạo
